@@ -2,6 +2,8 @@ import csv
 
 FILENAME = "expenses.csv"
 
+
+# ================= LOAD EXPENSES =================
 def load_expenses():
     expenses = []
     try:
@@ -17,6 +19,8 @@ def load_expenses():
         print("No previous data found. Starting fresh.")
     return expenses
 
+
+# ================= SAVE EXPENSES =================
 def save_expenses(expenses):
     with open(FILENAME, "w", newline="") as file:
         fieldnames = ["amount", "category", "date"]
@@ -25,6 +29,8 @@ def save_expenses(expenses):
         writer.writeheader()
         writer.writerows(expenses)
 
+
+# ================= ADD EXPENSE =================
 def add_expense(expenses):
     try:
         amount = float(input("Enter amount: "))
@@ -44,6 +50,8 @@ def add_expense(expenses):
     except ValueError:
         print("Invalid amount. Please enter a number.\n")
 
+
+# ================= VIEW EXPENSES =================
 def view_expenses(expenses):
     if not expenses:
         print("No expenses recorded.\n")
@@ -54,6 +62,8 @@ def view_expenses(expenses):
         print(f"{index}. ₹{exp['amount']} | {exp['category']} | {exp['date']}")
     print()
 
+
+# ================= DELETE EXPENSE =================
 def delete_expense(expenses):
     if not expenses:
         print("No expenses to delete.\n")
@@ -74,6 +84,8 @@ def delete_expense(expenses):
     except ValueError:
         print("Please enter a valid number.\n")
 
+
+# ================= MAIN MENU =================
 def main():
     expenses = load_expenses()
 
@@ -98,4 +110,6 @@ def main():
         else:
             print("Invalid option. Try again.\n")
 
+
+# ================= START PROGRAM =================
 main()
