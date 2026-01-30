@@ -97,11 +97,3 @@ Monthly expense summary
 
 Category-wise spending report
 
-Data visualization (graphs)
-
-GUI version using Tkinter
-
-👨‍💻 Author
-
-Satyam Rathod
-Python Learner | Future Software Developer 🚀
