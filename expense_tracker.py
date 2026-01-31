@@ -82,19 +82,6 @@ def monthly_total(expenses):
            total = total + exp["amount"]
    print(f"total expense of {month}: ${total}")
 
-def category_report(expenses):
-   report = {}
-   for exp in expenses:
-       category = exp["category"]
-       amount = exp["amount"]
-       if category in report:
-           report[category] += amount
-       else:
-           report[category] = amount
-
-   for cat, total in report.items():
-       print(f"{cat}: ${total}")
-
 def main():
    expenses = load_expenses()
 
