@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 print("welcome to the Expense tracker")
 
@@ -109,6 +110,61 @@ def category_report(expenses):
    for cat, total in report.items():
        print(f"{cat}: ${total}")
 
+def export_monthly_report(expenses):
+   month = input("enter the month(YYYY-MM-DD)")
+   report = {}
+
+   for exp in expenses:
+       date = exp["date"]
+       if date.startswith(month):
+           cat = exp["category"]
+           report[date] = report.get(cat, 0) + exp["amount"]
+
+   filename = f"report {month}.csv"
+
+   with open(filename, "w", newline="") as file:
+       writer = csv.writer(file)
+       writer.writerow(["Category", "total spent"])
+
+       for cat, total in report.items():
+           writer.writerow([cat, total])
+
+   print(f"Report saved as {filename}\n")
+
+def category_search(expenses):
+   search = input("enter the category to search: ")
+   found = False
+
+   for exp in expenses:
+       cat = exp['category']
+       if search == cat.lower():
+           print(f"{cat}: ${exp['amount']} | {exp['date']}")
+           found = True
+   if not found:
+       print("No Expenses found for this category.\n")
+   else:
+       print()
+
+def show_category_graph(expenses):
+   report = {}
+
+   for exp in expenses:
+       cat = exp['category']
+       report[cat] = report.get(cat, 0) + exp['amount']
+
+   if not report:
+       print("No data to visualize")
+       return
+
+   categories = list(report.keys())
+   totals = list(report.values())
+
+   plt.bar(categories, totals)
+   plt.xlabel("Category")
+   plt.ylabel("Amount Spent")
+   plt.title("Spending by Category")
+   plt.show()
+
 def main():
    expenses = load_expenses()
 
@@ -122,7 +178,10 @@ def main():
        print("4.Total of this month expense")
        print("5.category report")
        print("6.Apply Date Filter")
-       print("7.exit")
+       print("7.export monthly report")
+       print("8.Search by category")
+       print("9.Show Graph of Spending")
+       print("10.Exit")
 
        choice = int(input("choose the option from menu: "))
 
@@ -138,7 +197,13 @@ def main():
            category_report(expenses)
        elif choice==6:
            filter_date(expenses)
-       elif choice == 7:
+       elif choice==7:
+           export_monthly_report(expenses)
+       elif choice==8:
+           category_search(expenses)
+       elif choice==9:
+           show_category_graph(expenses)
+       elif choice == 10:
            print("Good Bye")
            save_expenses(expenses)
            IsExpenseTracker = False
