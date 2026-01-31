@@ -74,14 +74,6 @@ def delete_expense(expenses):
    except ValueError:
        print("Enter a valid input\n")
 
-def monthly_total(expenses):
-   month = input("Enter month(YYYY-MM): ")
-   total = 0.0
-   for exp in expenses:
-       if exp["date"].startswith(month):
-           total = total + exp["amount"]
-   print(f"total expense of {month}: ${total}")
-
 def main():
    expenses = load_expenses()
 
