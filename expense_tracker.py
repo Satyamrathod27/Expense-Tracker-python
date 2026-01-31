@@ -1,115 +1,134 @@
 import csv
+from datetime import datetime
 
-FILENAME = "expenses.csv"
+print("welcome to the Expense tracker")
 
+expense_sheet = "expenses.csv"
 
-# ================= LOAD EXPENSES =================
 def load_expenses():
-    expenses = []
-    try:
-        with open(FILENAME, "r") as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                expenses.append({
-                    "amount": float(row["amount"]),
-                    "category": row["category"],
-                    "date": row["date"]
-                })
-    except FileNotFoundError:
-        print("No previous data found. Starting fresh.")
-    return expenses
+   expenses = []
+   try:
+       with open(expense_sheet,"r") as file:
+           reader = csv.DictReader(file)
 
+           for row in reader:
+               expense = {
+                   "amount":float(row["amount"]),
+                   "category":row["category"],
+                   "date" : row["date"]
+               }
+               expenses.append(expense)
+   except FileNotFoundError:
+       print("No previous expense file found. starting fresh.")
+   return expenses
 
-# ================= SAVE EXPENSES =================
 def save_expenses(expenses):
-    with open(FILENAME, "w", newline="") as file:
-        fieldnames = ["amount", "category", "date"]
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+   with open(expense_sheet,"w",newline="") as file:
+       fieldnames = ["amount","category","date"]
+       writer = csv.DictWriter(file ,fieldnames=fieldnames)
 
-        writer.writeheader()
-        writer.writerows(expenses)
+       writer.writeheader()
+       for expense in expenses:
+           writer.writerow(expense)
 
-
-# ================= ADD EXPENSE =================
 def add_expense(expenses):
-    try:
-        amount = float(input("Enter amount: "))
-        category = input("Enter category: ")
-        date = input("Enter date (YYYY-MM-DD): ")
+   try:
+       amount = float(input("enter the amount: "))
+       category = input("enter the category: ")
+       date = datetime.today().strftime('%Y-%m-%d')
 
-        expense = {
-            "amount": amount,
-            "category": category,
-            "date": date
-        }
+       expense = {
+           "amount":amount,
+           "category":category,
+           "date":date
+       }
+       expenses.append(expense)
+       save_expenses(expenses)
 
-        expenses.append(expense)
-        save_expenses(expenses)
-        print("Expense added successfully!\n")
-
-    except ValueError:
-        print("Invalid amount. Please enter a number.\n")
+   except ValueError:
+       print("enter the correct value")
 
 
-# ================= VIEW EXPENSES =================
 def view_expenses(expenses):
-    if not expenses:
-        print("No expenses recorded.\n")
-        return
+   if not expenses:
+       print("there are not expenses to track")
+       return
+   print("\nyour expenses: ")
+   for index,exp in enumerate(expenses,start=1):
+       print(f"{index}. ${exp['amount']} | {exp['category']} | {exp['date']}")
+   print()
 
-    print("\nYour Expenses:")
-    for index, exp in enumerate(expenses, start=1):
-        print(f"{index}. ₹{exp['amount']} | {exp['category']} | {exp['date']}")
-    print()
-
-
-# ================= DELETE EXPENSE =================
 def delete_expense(expenses):
-    if not expenses:
-        print("No expenses to delete.\n")
-        return
+   if not expenses:
+       print("there are no expenses to delete")
+       return
+   view_expenses(expenses)
+   try:
+       choice = int(input("enter the number of the Expense you want to delete: "))
+       if 1<= choice <= len(expenses):
+           removed = expenses.pop(choice-1)
+           save_expenses(expenses)
+           print(f"{removed['amount']} {removed['category']} is deleted successfully")
+       else:
+           print("enter a valid choice")
+   except ValueError:
+       print("Enter a valid input\n")
 
-    view_expenses(expenses)
+def monthly_total(expenses):
+   month = input("Enter month(YYYY-MM): ")
+   total = 0.0
+   for exp in expenses:
+       if exp["date"].startswith(month):
+           total = total + exp["amount"]
+   print(f"total expense of {month}: ${total}")
 
-    try:
-        choice = int(input("Enter expense number to delete: "))
+def category_report(expenses):
+   report = {}
+   for exp in expenses:
+       category = exp["category"]
+       amount = exp["amount"]
+       if category in report:
+           report[category] += amount
+       else:
+           report[category] = amount
 
-        if 1 <= choice <= len(expenses):
-            removed = expenses.pop(choice - 1)
-            save_expenses(expenses)
-            print(f"Deleted expense: ₹{removed['amount']} {removed['category']}\n")
-        else:
-            print("Invalid number.\n")
+   for cat, total in report.items():
+       print(f"{cat}: ${total}")
 
-    except ValueError:
-        print("Please enter a valid number.\n")
-
-
-# ================= MAIN MENU =================
 def main():
-    expenses = load_expenses()
+   expenses = load_expenses()
 
-    while True:
-        print("==== Expense Tracker ====")
-        print("1. Add Expense")
-        print("2. View Expenses")
-        print("3. Delete Expense")
-        print("4. Exit")
+   IsExpenseTracker = True
 
-        choice = input("Choose an option: ")
+   while IsExpenseTracker:
+       print("\n====== Expense Tracker Menu ======")
+       print("1.add Expense")
+       print("2.view expenses")
+       print("3.delete expense")
+       print("4.Total of this month expense")
+       print("5.category report")
+       print("6.exit")
 
-        if choice == "1":
-            add_expense(expenses)
-        elif choice == "2":
-            view_expenses(expenses)
-        elif choice == "3":
-            delete_expense(expenses)
-        elif choice == "4":
-            print("Goodbye! 👋")
-            break
-        else:
-            print("Invalid option. Try again.\n")
+       choice = int(input("choose the option from menu: "))
 
+       if choice == 1:
+           add_expense(expenses)
+       elif choice == 2:
+           view_expenses(expenses)
+       elif choice == 3:
+           delete_expense(expenses)
+       elif choice==4:
+           monthly_total(expenses)
+       elif choice==5:
+           category_report(expenses)
+       elif choice == 6:
+           print("Good Bye")
+           save_expenses(expenses)
+           IsExpenseTracker = False
+       else:
+           print("Enter a valid choice, try again\n")
 
-# ================= START PROGRAM =================
 main()
+
+
+
