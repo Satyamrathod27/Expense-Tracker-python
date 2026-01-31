@@ -82,6 +82,20 @@ def monthly_total(expenses):
            total = total + exp["amount"]
    print(f"total expense of {month}: ${total}")
 
+def filter_date(expenses):
+   found = False
+   fromdate = input("Enter the From Date(YYYY-MM-DD): ")
+   todate = input("Enter the To Date(YYYY-MM-DD): ")
+   for exp in expenses:
+       date = exp["date"]
+       if fromdate <= date <= todate:
+           print(f"${exp['amount']} | {exp['category']} | {exp['date']}")
+           found = True
+   if not found:
+       print("There are no Expenses found.\n")
+   else:
+       print()
+
 def category_report(expenses):
    report = {}
    for exp in expenses:
@@ -107,7 +121,8 @@ def main():
        print("3.delete expense")
        print("4.Total of this month expense")
        print("5.category report")
-       print("6.exit")
+       print("6.Apply Date Filter")
+       print("7.exit")
 
        choice = int(input("choose the option from menu: "))
 
@@ -121,7 +136,9 @@ def main():
            monthly_total(expenses)
        elif choice==5:
            category_report(expenses)
-       elif choice == 6:
+       elif choice==6:
+           filter_date(expenses)
+       elif choice == 7:
            print("Good Bye")
            save_expenses(expenses)
            IsExpenseTracker = False
